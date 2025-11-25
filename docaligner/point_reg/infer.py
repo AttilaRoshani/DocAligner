@@ -47,9 +47,10 @@ def preprocess(
 def postprocess(
     points: np.ndarray,
     has_obj: bool,
-    imgs_size: Tuple[int, int]
+    imgs_size: Tuple[int, int],
+    point_threshold: float = 0.5,
 ) -> np.ndarray:
-    if has_obj > 0.5:
+    if has_obj > point_threshold:
         points = points.reshape(4, 2)
         polygon = points * np.array(imgs_size[::-1])
     else:
@@ -88,6 +89,7 @@ class Inference:
         self,
         img: np.ndarray,
         do_center_crop: bool = False,
+        threshold: float = 0.5,
     ) -> np.ndarray:
         img_infos = preprocess(
             img=img,
@@ -99,6 +101,7 @@ class Inference:
             points=x['points'],
             has_obj=x['has_obj'],
             imgs_size=img_infos['img_size_ori'],
+            point_threshold=threshold,
         )
 
         if len(polygon):
